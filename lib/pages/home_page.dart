@@ -1,9 +1,11 @@
+import 'package:chatapp/components/chat_bubble.dart';
 import 'package:chatapp/services/auth/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../components/blue_grey_bubble.dart';
 import 'chat_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,20 +26,39 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
-          title: const Text('ChatApp',
-              style: TextStyle(
-                color: Colors.black,
-              )),
-          backgroundColor: const Color.fromARGB(255, 154, 28, 8),
-          actions: [
-            IconButton(
-              onPressed: signOut,
-              icon: const Icon(Icons.logout),
-            )
-          ]),
-      body: _buildUserList(),
+        title: const Text('ChatApp',
+            style: TextStyle(
+              color: Colors.white,
+            )),
+        // backgroundColor: const Color.fromARGB(255, 154, 28, 8),
+        
+            actions: [
+              IconButton(
+                onPressed: signOut,
+                icon: const Icon(Icons.logout),
+              )
+            ],
+            flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [ Colors.red, Colors.black],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            ),
+      ),
+      
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        child: Container(
+          decoration:const BoxDecoration(
+            color: Colors.white,
+          ),
+          child: _buildUserList()),
+      ),
     );
   }
 
@@ -78,13 +99,13 @@ class _HomePageState extends State<HomePage> {
 
     if (_auth.currentUser!.email != data['email']) {
       return ListTile(
-        title: Text(
-          data['email'],
-          style: const TextStyle(
-            fontSize: 20,
-            color: Color.fromARGB(255, 154, 28, 8),
-          ),
-        ),
+        title: BlueGreyBubble(
+          message: data["email"],
+            // style: const TextStyle(
+            //   fontSize: 20,
+            //   color: Color.fromARGB(255, 177, 38, 17),
+            ),
+          
         onTap: () {
           Navigator.push(
             context,

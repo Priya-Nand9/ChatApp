@@ -35,8 +35,18 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 161, 24, 24),
-      body: SafeArea(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.red, Colors.black],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+      
+      
+      //backgroundColor: const Color.fromARGB(255, 161, 24, 24),
+      child: SafeArea(
         child: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -60,6 +70,8 @@ class _LoginPageState extends State<LoginPage> {
                   "Welcome Back",
                   style: TextStyle(
                     fontSize: 25,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(
@@ -80,22 +92,22 @@ class _LoginPageState extends State<LoginPage> {
                   hintText: "Enter Password",
                   obscureText: true,
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                //Forgot password
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        "Forgot password?",
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ],
-                  ),
-                ),
+                // const SizedBox(
+                //   height: 10,
+                // ),
+                // //Forgot password
+                // const Padding(
+                //   padding: EdgeInsets.symmetric(horizontal: 15.0),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.end,
+                //     children: [
+                //       Text(
+                //         "Forgot password?",
+                //         style: TextStyle(color: Colors.black),
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 const SizedBox(
                   height: 25,
                 ),
@@ -110,17 +122,17 @@ class _LoginPageState extends State<LoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Not a member?"),
+                    const Text("Not a member?",style: TextStyle(color: Colors.white),),
                     const SizedBox(
                       width: 5,
                     ),
                     TextButton(
                       onPressed: widget.onTap,
                       child: const Text(
-                        "Register now",
+                        "Register now", 
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: Colors.white
                         ),
                       ),
                     ),
@@ -130,6 +142,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ),
+      ),
       ),
     );
   }

@@ -5,6 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../components/sender_chat_bubble.dart';
+
 class ChatPage extends StatefulWidget {
   final String receiverUserEmail;
   final String receiverUserId;
@@ -33,16 +35,25 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
         title: Text(
           widget.receiverUserEmail,
           style: const TextStyle(
-            color: Colors.black,
+            color: Colors.white,
           )
         ),
-          backgroundColor:const Color.fromARGB(255, 154, 28, 8), 
+          //backgroundColor:const Color.fromARGB(255, 154, 28, 8), 
+          flexibleSpace: Container(
+          decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [ Colors.red, Colors.black],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
         ),
+      ),
         body: Column(children: [
         Expanded(
           child: _buildMessageList(),
@@ -114,9 +125,10 @@ class _ChatPageState extends State<ChatPage> {
             //  style: const TextStyle(
             //     color: Color.fromARGB(255, 154, 28, 8), 
             //  ),
-            //),
+            //),  
             const SizedBox(height: 5,),
-            ChatBubble(message: data['message']),
+            (data['senderId'] == _firebaseAuth.currentUser!.uid) ?
+            ChatBubble(message: data['message']) : SenderChatBubble(message: data['message']),
           ],
         ),
       ),
