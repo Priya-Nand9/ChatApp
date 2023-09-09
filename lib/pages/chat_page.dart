@@ -4,7 +4,6 @@ import 'package:chatapp/services/chat/chat_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import '../components/sender_chat_bubble.dart';
 
 class ChatPage extends StatefulWidget {
@@ -20,22 +19,35 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
   final ChatService _chatService = ChatService();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
+  @override
+  void initState() {
+    super.initState();
+    // Scroll to the bottom when the page is opened
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    });
+  }
+  
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
       await _chatService.sendMessage(
           widget.receiverUserId, _messageController.text);
       _messageController.clear();
+      
+      // Scroll to the bottom after sending a message
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
         title: Text(
           widget.receiverUserEmail,
@@ -65,7 +77,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget _buildMessageList() {
+/*  Widget _buildMessageList() {
     return StreamBuilder(
       stream: _chatService.getMessages(
           widget.receiverUserId, _firebaseAuth.currentUser!.uid),
@@ -90,14 +102,64 @@ class _ChatPageState extends State<ChatPage> {
           );
         }
 
-        return ListView(
-          children: snapshot.data!.docs
-              .map((document) => _buildMessageItem(document))
-              .toList(),
+        
+
+        return ListView.builder(
+          controller: _scrollController,
+          itemCount: snapshot.data!.docs.length,
+          itemBuilder: (context, index) {
+            return _buildMessageItem(snapshot.data!.docs[index]);
+          },
         );
       },
     );
   }
+
+*/
+
+      Widget _buildMessageList() {
+      return StreamBuilder(
+        stream: _chatService.getMessages(
+            widget.receiverUserId, _firebaseAuth.currentUser!.uid),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Text(
+              'Error ${snapshot.error}',
+              style: const TextStyle(
+                fontSize: 20,
+                color: Color.fromARGB(255, 154, 28, 8),
+              ),
+            );
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Text(
+              'Loading...',
+              style: TextStyle(
+                fontSize: 20,
+                color: Color.fromARGB(255, 154, 28, 8),
+              ),
+            );
+          }
+
+          WidgetsBinding.instance?.addPostFrameCallback((_) {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+            );
+          });
+
+          return ListView.builder(
+            controller: _scrollController,
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              return _buildMessageItem(snapshot.data!.docs[index]);
+            },
+          );
+        },
+      );
+    }
 
   Widget _buildMessageItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data() as Map<String, dynamic>;

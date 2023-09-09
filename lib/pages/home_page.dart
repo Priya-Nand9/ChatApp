@@ -1,4 +1,5 @@
-import 'package:chatapp/components/chat_bubble.dart';
+import 'package:chatapp/components/drawer.dart';
+import 'package:chatapp/pages/profile_page.dart';
 import 'package:chatapp/services/auth/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,6 +24,17 @@ class _HomePageState extends State<HomePage> {
     authService.signOut();
   }
 
+  void goToProfilePage() {
+    Navigator.pop(context);
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ProfilePage(),
+        )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,32 +44,27 @@ class _HomePageState extends State<HomePage> {
             style: TextStyle(
               color: Colors.white,
             )),
-        // backgroundColor: const Color.fromARGB(255, 154, 28, 8),
-        
-            actions: [
-              IconButton(
-                onPressed: signOut,
-                icon: const Icon(Icons.logout),
-              )
-            ],
-            flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [ Colors.red, Colors.black],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.red, Colors.black],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            ),
+          ),
+        ),
       ),
-      
+      drawer: MyDrawer(
+        onProfileTap: goToProfilePage,
+        onSignOut: signOut,
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 15),
         child: Container(
-          decoration:const BoxDecoration(
-            color: Colors.white,
-          ),
-          child: _buildUserList()),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+            ),
+            child: _buildUserList()),
       ),
     );
   }
@@ -101,11 +108,7 @@ class _HomePageState extends State<HomePage> {
       return ListTile(
         title: BlueGreyBubble(
           message: data["email"],
-            // style: const TextStyle(
-            //   fontSize: 20,
-            //   color: Color.fromARGB(255, 177, 38, 17),
-            ),
-          
+        ),
         onTap: () {
           Navigator.push(
             context,
